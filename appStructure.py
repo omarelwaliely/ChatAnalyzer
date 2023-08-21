@@ -149,7 +149,7 @@ class WebApp():
 
     def messagesOverTime(self):
         chart = st.empty()
-        option = st.selectbox('Select View',('Monthly', 'Yearly'), key = 'messagetime')
+        option = st.selectbox('Select View',('Automatic', 'Yearly'), key = 'messagetime')
         if option == 'Yearly':
            chart.plotly_chart(self.messagesPerYear(),use_container_width=True)
         else:
@@ -157,7 +157,7 @@ class WebApp():
 
     def wordsOverTime(self):
         chart = st.empty()
-        option = st.selectbox('Select View',('Monthly', 'Yearly'),key = 'wordtime')
+        option = st.selectbox('Select View',('Automatic', 'Yearly'),key = 'wordtime')
         if option == 'Yearly':
             chart.plotly_chart(self.wordsPerYear(), use_container_width=True)
         else:
@@ -171,13 +171,13 @@ class WebApp():
         option = st.selectbox('Select View',mediaOpt,key = 'mediatime')
         if option== 'ALL OF THE ABOVE':
             chatDistribution = self.hist[self.hist['Media'].notnull()].groupby('Date')["Text"].count().reset_index()
-            chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='left').fillna(0)
+            chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='right').fillna(0)
             fig = px.line(chatDistribution, x='Date', y='Text', labels={ "Date" : "Date", "Text" : "Number of Media"},title='Number of Media')
             fig.update_traces(line=dict(color='magenta'))
             chart.plotly_chart(fig,use_container_width=True)
         else:
             chatDistribution = self.hist[self.hist['Media']== option].groupby('Date')["Text"].count().reset_index()
-            chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='left').fillna(0)
+            chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='right').fillna(0)
             fig = px.line(chatDistribution, x='Date', y='Text', labels={ "Date" : "Date", "Text" : f"Number of {option}s"},title=f'Number of {option}s')
             fig.update_traces(line=dict(color='magenta'))
             chart.plotly_chart(fig,use_container_width=True)
@@ -194,14 +194,14 @@ class WebApp():
 
     def messagesPerYear(self):
         chatDistribution = self.hist.groupby('Year')["Text"].count().reset_index()
-        chatDistribution = pd.merge(pd.DataFrame({'Year': self.allyears}), chatDistribution, on='Year', how='left').fillna(0)
+        chatDistribution = pd.merge(pd.DataFrame({'Year': self.allyears}), chatDistribution, on='Year', how='right').fillna(0)
         fig = px.line(chatDistribution, x='Year', y='Text', labels={ "Year" : "Year", "Text" : "Number of Texts"},title='Number of Texts Per Year')
         return fig
 
     def messagesPerMonth(self):
         chatDistribution = self.hist.groupby('Date')["Text"].count().reset_index()
-        chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='left').fillna(0)
-        fig = px.line(chatDistribution, x='Date', y='Text', labels={ "Date" : "Date", "Text" : "Number of Texts"},title='Number of Texts Per Month')
+        chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='right').fillna(0)
+        fig = px.line(chatDistribution, x='Date', y='Text', labels={ "Date" : "Date", "Text" : "Number of Texts"},title='Number of Texts')
         return fig
     
     def messagesPerPerson(self):
@@ -211,14 +211,14 @@ class WebApp():
 
     def wordsPerYear(self):
         chatDistribution = self.hist.groupby('Year')["Words"].sum().reset_index()
-        chatDistribution = pd.merge(pd.DataFrame({'Year': self.allyears}), chatDistribution, on='Year', how='left').fillna(0)
+        chatDistribution = pd.merge(pd.DataFrame({'Year': self.allyears}), chatDistribution, on='Year', how='right').fillna(0)
         fig = px.line(chatDistribution, x='Year', y='Words', labels={ "Year" : "Year", "Words" : "Number of Words"},title='Number of Words Per Year')
         return fig
 
     def wordsPerMonth(self):
         chatDistribution = self.hist.groupby('Date')["Words"].sum().reset_index()
-        chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='left').fillna(0)
-        fig = px.line(chatDistribution, x='Date', y='Words', labels={ "Date" : "Date", "Words" : "Number of Words"},title='Number of Words Per Month')
+        chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='right').fillna(0)
+        fig = px.line(chatDistribution, x='Date', y='Words', labels={ "Date" : "Date", "Words" : "Number of Words"},title='Number of Words')
         return fig
 
     def wordsPerPerson(self):
