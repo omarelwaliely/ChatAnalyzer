@@ -174,16 +174,13 @@ class WebApp():
         if option== 'ALL OF THE ABOVE':
             chatDistribution = self.hist[self.hist['Media'].notnull()].groupby('Date')["Text"].count().reset_index()
             chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='outer').fillna(0)
-            st.dataframe(chatDistribution)
             chatDistribution = chatDistribution.sort_values('Date')
             fig = px.line(chatDistribution, x='Date', y='Text', labels={ "Date" : "Date", "Text" : "Number of Media"},title='Number of Media')
             fig.update_traces(line=dict(color='magenta'))
             chart.plotly_chart(fig,use_container_width=True)
         else:
             chatDistribution = self.hist[self.hist['Media']== option].groupby('Date')["Text"].count().reset_index()
-            st.dataframe(chatDistribution)
             chatDistribution = pd.merge(self.allmonths, chatDistribution, on='Date', how='outer').fillna(0)
-            st.dataframe(chatDistribution)
             chatDistribution = chatDistribution.sort_values('Date')
             fig = px.line(chatDistribution, x='Date', y='Text', labels={ "Date" : "Date", "Text" : f"Number of {option}s"},title=f'Number of {option}s')
             fig.update_traces(line=dict(color='magenta'))
